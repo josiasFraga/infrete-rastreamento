@@ -24,14 +24,26 @@ const DashboardPage = () => {
 
   const frota_selecionada = useSelector(state => state.appReducer.frota_selecionada);
   const traces_frota = useSelector(state => state.appReducer.traces_frota);
+  const minhas_frotas = useSelector(state => state.appReducer.minhas_frotas);
   const [itemActiveIndex, setItemActiveIndex] = React.useState(-1);
   const [open, setOpen] = React.useState(false);
 
   useEffect(() => {
     if ( Object.keys(frota_selecionada).length > 0 ) {
       dispatch({type: 'BUSCA_TRACES_FROTA', payload: {frota_id : frota_selecionada.id}});
+      setItemActiveIndex(-1);
     }
 	}, [frota_selecionada]);
+
+  useEffect(() => {
+    if ( minhas_frotas.length > 0 ) {
+  
+      dispatch({type: 'SET_FROTA_SELECIONADA_TRIGGER', payload: {
+        frota: minhas_frotas[0]
+      }});
+      
+    }
+	}, [minhas_frotas]);
 
   let last_response = {};
   let last_row = {};
@@ -84,7 +96,6 @@ const DashboardPage = () => {
   //console.log(sensores_splitted);
   //console.log(sensores_splitted[(sensores_splitted.length-1)]);
   //console.log(sensores_splitted[(sensores_splitted.length-2)]);
-
 
   return (
     <Grid container component="main" sx={{ minHeight: '100vh', backgroundColor: '#184a61' }}>
