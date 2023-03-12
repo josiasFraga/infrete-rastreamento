@@ -168,73 +168,71 @@ const DashboardPage = () => {
                 overflow: `auto`
               }}>
                 <div style={{position: 'relative', margin: '0 auto', width: 515}}>
-                  <img src='/truck_wireframe.jpeg' width={500} style={{ marginTop: 35, marginLeft: 10 }} />
-                  <img src='/tires.jpeg' width={70} style={{ position: 'absolute', top: 113, left: 378 }} />
-                  <img src='/truck.png' width={115} style={{position: 'absolute', top: 75, left: 10}} />
+                  <img src='/truck.png' width={600} style={{position: 'absolute', top: 40, left: 0}} />
                   <img src={sensores_splitted[(sensores_splitted.length-1)] == 1 ? '/car_enabled.png' : '/car.png'} width={100} style={{
                     position: 'absolute', 
-                    top: 20, 
-                    left: 15,
+                    top: 40, 
+                    left: 25,
                     transform: 'rotate(5deg)'
                   }} />
-                  <img src={sensores_splitted[(sensores_splitted.length-2)] == 1 ? '/car_enabled.png' : '/car.png'} width={100} style={{
+                  <img src={sensores_splitted[(sensores_splitted.length-2)] == 1 ? '/car_enabled.png' : '/car.png'} width={105} style={{
                     position: 'absolute', 
-                    top: 19, 
-                    left: 103, 
+                    top: 42, 
+                    left: 129, 
                     transform: 'scaleX(-1)'
                   }} />
                   <img src={sensores_splitted[(sensores_splitted.length-3)] == 1 ? '/car_enabled.png' : '/car.png'} width={100} style={{
                     position: 'absolute', 
-                    top: 12, 
-                    left: 206,
-                    transform: 'rotate(10deg)'
+                    top: 35, 
+                    left: 249,
+                    transform: 'rotate(6deg)'
                   }} />
                   <img src={sensores_splitted[(sensores_splitted.length-4)] == 1 ? '/car_enabled.png' : '/car.png'} width={120} style={{
                     position: 'absolute', 
-                    top: 4, 
-                    left: 294, 
-                    transform: 'scaleX(-1) rotate(4deg)',
+                    top: 30, 
+                    left: 360, 
+                    transform: 'scaleX(-1) rotate(2deg)',
                   }} />
                   <img src={sensores_splitted[(sensores_splitted.length-5)] == 1 ? '/car_enabled.png' : '/car.png'} width={110} style={{
                     position: 'absolute', 
-                    top: 12, 
-                    left: 410,
-                    transform: 'rotate(10deg)'
+                    top: 37, 
+                    left: 490,
+                    transform: 'rotate(7deg)'
                   }} />
-                  <img src={sensores_splitted[(sensores_splitted.length-6)] == 1 ? '/car_enabled.png' : '/car.png'} width={110} style={{
+                  <img src={sensores_splitted[(sensores_splitted.length-6)] == 1 ? '/car_enabled.png' : '/car.png'} width={113} style={{
                     position: 'absolute', 
-                    top: 60, 
-                    left: 62,
-                    transform: 'rotate(5deg)'
+                    top: 90, 
+                    left: 79,
+                    transform: 'rotate(2deg)'
                   }} />
                   <img src={sensores_splitted[(sensores_splitted.length-7)] == 1 ? '/car_enabled.png' : '/car.png'} width={110} style={{
                     position: 'absolute', 
-                    top: 50, 
-                    left: 162,
+                    top: 80, 
+                    left: 220,
                     transform: 'rotate(9deg)'
                   }} />
                   <img src={sensores_splitted[(sensores_splitted.length-8)] == 1 ? '/car_enabled.png' : '/car.png'} width={110} style={{
                     position: 'absolute', 
-                    top: 48, 
-                    left: 289,
+                    top: 75, 
+                    left: 355,
                     transform: 'rotate(9deg)'
                   }} />
                   <img src={sensores_splitted[(sensores_splitted.length-9)] == 1 ? '/car_enabled.png' : '/car.png'} width={120} style={{
                     position: 'absolute', 
-                    top: 50, 
-                    left: 399,
+                    top: 85, 
+                    left: 470,
                     transform: 'rotate(5deg)'
                   }} />
                   <img src={sensores_splitted[(sensores_splitted.length-10)] == 1 ? '/car_enabled.png' : '/car.png'} width={100} style={{
                     position: 'absolute', 
-                    top: 84, 
-                    left: 155, 
+                    top: 120, 
+                    left: 195, 
                     transform: 'scaleX(-1)'
                   }} />
                   <img src={sensores_splitted[(sensores_splitted.length-11)] == 1 ? '/car_enabled.png' : '/car.png'} width={110} style={{
                     position: 'absolute', 
-                    top: 80, 
-                    left: 270, 
+                    top: 115, 
+                    left: 325, 
                     transform: 'scaleX(-1)'
                   }} />
                 </div>
