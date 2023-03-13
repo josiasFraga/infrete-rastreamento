@@ -103,7 +103,7 @@ const LoginForm = () => {
         }
         <Grid item>
           <Link href="/cadastro" variant="body2">
-            {"Não possui uma conta? Cadastre-se"}
+            {1 == 2 ? "Não possui uma conta? Cadastre-se" : ""}
           </Link>
         </Grid>
       </Grid>
