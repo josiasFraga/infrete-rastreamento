@@ -63,7 +63,7 @@ const DashboardPage = () => {
     sensores_splitted = sensores.split('');
   
     sensores_ativos = sensores_splitted.filter((_sensor) => {
-      return _sensor === "1";
+      return _sensor === "0";
     });
   
     const item_created = last_row.created.split('+')[0];//isso é para n bugar o timezone
@@ -99,11 +99,11 @@ const DashboardPage = () => {
 
   let car_images = [''];
   for (let i = 0; i <= car_length; i++) {
-    if ( sensores_splitted[i] == 1 ) {
+    if ( sensores_splitted[i] == 0 ) {
       car_images.push('car_enabled.png');
     }
 
-    if ( sensores_splitted[i]  == 0 ) {
+    if ( sensores_splitted[i]  == 1 ) {
       car_images.push('car.png');
     }
 
