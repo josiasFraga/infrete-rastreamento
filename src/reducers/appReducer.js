@@ -2,6 +2,8 @@ const INITIAL_STATE = {
     minhas_frotas_loading: false,
     minhas_frotas: [],
     frota_selecionada: {},
+    cliente_frotas: [],
+    cliente_frotas_loading: [],
     traces_frota: [],
     traces_frota_loading: false,
     clientes: [],
@@ -18,6 +20,13 @@ export const appReducer = (state = INITIAL_STATE, action) => {
       return {...state, minhas_frotas: action.payload, minhas_frotas_loading: false};
       case 'BUSCA_MINHAS_FROTAS_FAILED':
       return {...state, minhas_frotas: [], minhas_frotas_loading: false};
+  
+      case 'BUSCA_CLIENTE_FROTAS':
+      return {...state, cliente_frotas: [], cliente_frotas_loading: true};
+      case 'BUSCA_CLIENTE_FROTAS_SUCCESS':
+      return {...state, cliente_frotas: action.payload, cliente_frotas_loading: false};
+      case 'BUSCA_CLIENTE_FROTAS_FAILED':
+      return {...state, cliente_frotas: [], cliente_frotas_loading: false};
     
       case 'BUSCA_TRACES_FROTA':
       return {...state, traces_frota_loading: true};

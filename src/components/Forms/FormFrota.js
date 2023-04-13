@@ -33,9 +33,9 @@ const FormFrota = (props) => {
           value={formik.values.serial}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
-          error={formik.errors.frotas && formik.errors.serial && formik.touched.frotas && formik.touched.serial}
+          error={formik.errors.serial && formik.touched.serial}
           helperText={
-            formik.errors.frotas && formik.errors.serial && formik.touched.frotas && formik.touched.serial
+            formik.errors.serial && formik.touched.serial
               ? formik.errors.serial
               : ""
           }
@@ -51,9 +51,9 @@ const FormFrota = (props) => {
             formik.setFieldValue(`placa`, maskPlaca(event.target.value.toUpperCase()));
           }}
           onBlur={formik.handleBlur}
-          error={formik.errors.frotas && formik.errors.placa && formik.touched.frotas && formik.touched.placa}
+          error={formik.errors.placa && formik.touched.placa}
           helperText={
-            formik.errors.frotas && formik.errors.placa && formik.touched.frotas && formik.touched.placa ? formik.errors.placa : ""
+            formik.errors.placa && formik.touched.placa ? formik.errors.placa : ""
           }
           fullWidth
         />

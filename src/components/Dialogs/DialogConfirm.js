@@ -14,9 +14,6 @@ export default function DialogConfirm(props) {
     const title = props.title;
     const message = props.message;
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
 
     const handleClose = () => {
         setOpen(false);

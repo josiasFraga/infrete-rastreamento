@@ -128,6 +128,35 @@ function* bMinhasFrotas({payload}) {
 
 }
 
+function* bClienteFrotas({payload}) {
+
+    try {
+        const response = yield call(callApi, {
+            endpoint: process.env.REACT_APP_API_URL + '/frotas/client/' + payload.client_id + '.json',
+            method: 'GET',
+            params: {},
+        });
+
+        if (response.status === 200) {
+            yield put({
+				type: 'BUSCA_CLIENTE_FROTAS_SUCCESS',
+				payload: response.data.data
+			});
+        } else {
+            toast.error("Ocorreu um erro ao buscar as frotas");
+            yield put({
+				type: 'BUSCA_CLIENTE_FROTAS_FAILED'
+			});
+        }
+
+    } catch ({message, response}) {
+        toast.error("Ocorreu um erro ao buscar as frotas");yield put({
+            type: 'BUSCA_CLIENTE_FROTAS_FAILED',
+        });
+    }
+
+}
+
 function* sFrotaSelecionada({payload}) {
         
     yield put({
@@ -222,6 +251,75 @@ function* dUsuario({payload}) {
 
 }
 
+function* sFrota({payload}) {
+
+    var data = new FormData();
+    var dados = payload.submitValues;
+
+    console.log(JSON.stringify(dados));
+
+    data.append("dados", JSON.stringify(dados));
+
+    let endpoint = process.env.REACT_APP_API_URL + '/frotas/add.json';
+
+    if ( dados.id && dados.id !== null && dados.id !== '' ) {
+        endpoint = process.env.REACT_APP_API_URL + '/frotas/edit/' + dados.id + '.json';
+    }
+
+    try {
+        const response = yield call(callApi, {
+            endpoint: endpoint,
+            method: 'POST',
+            data: data,
+        });
+
+        payload.setSubmitting(false);
+
+        if ( response.data.status !== 'ok' ) {
+            toast.error("Ocorreu um erro ao realizar o cadastro, tente novamente." );
+        } else {
+            toast.success("O cadastro foi realizado com sucesso!");
+            if ( payload.callback ) {
+                payload.callback();
+            }
+        }
+
+
+    } catch ({message, response}) {
+        toast.error("Ocorreu um erro ao realizar o cadastro, tente novamente. " + message );
+        console.warn('[ERROR : CADASTRO FROTA]', {message, response});
+        payload.setSubmitting(false);
+    }
+
+}
+
+function* dFrota({payload}) {
+
+    try {
+        const response = yield call(callApi, {
+            endpoint: process.env.REACT_APP_API_URL + '/frotas/delete/' + payload.id + '.json',
+            method: 'DELETE',
+        });
+
+        if (response.status === 200) {
+            payload.callback();
+            yield toast.success("Frota excluída com sucesso!");
+        }
+        yield put({
+            type: 'DELETE_FROTA_SUCCESS',
+            payload: {}
+        });
+
+    } catch ({message, response}) {
+        yield toast.error("Erro ao excluir a frota");
+        yield put({
+            type: 'DELETE_FROTA_SUCCESS',
+            payload: {}
+        });
+    }
+
+}
+
 export default function* () {
 	yield takeLatest('LOGIN_TRIGGER', login);
 	yield takeLatest('CADASTRO_TRIGGER', cadastro);
@@ -230,4 +328,8 @@ export default function* () {
 	yield takeLatest('BUSCA_TRACES_FROTA', bTracesFrota);
 	yield takeLatest('BUSCA_CLIENTES', bClientes);
 	yield takeLatest('DELETE_USUARIO', dUsuario);
+	yield takeLatest('BUSCA_CLIENTE_FROTAS', bClienteFrotas);
+	yield takeLatest('SALVA_FROTA', sFrota);
+	yield takeLatest('DELETE_FROTA', dFrota);
+    
 }

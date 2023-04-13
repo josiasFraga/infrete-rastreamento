@@ -6,6 +6,8 @@ import Header from '../../components/Header';
 import DialogConfirm from '../../components/Dialogs/DialogConfirm';
 import DialogForm from '../../components/Dialogs/DialogForm';
 import FormCadastro from '../../components/Forms/FormCadastro';
+import FormFrota from '../../components/Forms/FormFrota';
+import DialogFrotas from './components/DialogFrotas';
 
 import { format } from 'date-fns';
 import { DataGrid } from '@mui/x-data-grid';
@@ -29,6 +31,10 @@ const initialState = {
   senha: "",
   repeatSenha: "",
 }
+const initialStateFleet = {
+  placa: "",
+  serial: "",
+}
 
 const ClientesPage = () => {
     
@@ -37,16 +43,12 @@ const ClientesPage = () => {
     const [idClienteExcluir, setIdClienteExcluir] = React.useState(null);
     const [dialogConfirmOpen, setDialogConfirmOpen] = React.useState(false);
     const [dialogFormOpen, setDialogFormOpen] = React.useState(false);
+    const [dialogFleetFormOpen, setDialogFleetFormOpen] = React.useState(false);
+    const [dialogFrotasOpen, setDialogFrotasOpen] = React.useState(false);
     const [idClienteCarregarFrotas, setIdClienteCarregarFrotas] = React.useState(null);
     
     const [initialValues, setInitialValues] = React.useState(initialState);
-    
-
-    const frotaValidationRules = yup.object().shape({
-      serial: yup.string().required("Número serial é obrigatório"),
-      placa: yup.string().matches(/^[a-zA-Z]{3}[0-9][A-Za-z0-9][0-9]{2}$/, 'Formato antigo da placa inválido.')
-      .required('Placa é obrigatório'),
-    });
+    const [initialValuesFleet, setInitialValuesFleet] = React.useState(initialStateFleet);
   
     const validationRules = {
       id: yup.string(),
@@ -62,6 +64,12 @@ const ClientesPage = () => {
         .string()
         .oneOf([yup.ref("senha"), null], "As senhas não coincidem"),
         //.required("Confirmação de senha é obrigatória"),
+    };
+  
+    const validationRulesFleet = {
+      serial: yup.string().required("Número serial é obrigatório"),
+      placa: yup.string().matches(/^[a-zA-Z]{3}[0-9][A-Za-z0-9][0-9]{2}$/, 'Formato antigo da placa inválido.')
+      .required('Placa é obrigatório'),
     };
 
     const handleClickEdit = (usuario) => {
@@ -137,7 +145,7 @@ const ClientesPage = () => {
           return (
           <IconButton color="secondary" aria-label="delete" onClick={() => {
             setIdClienteCarregarFrotas(params.row.id);
-            //setDialogConfirmOpen(true);
+            setDialogFrotasOpen(true);
           }}>
             <LocalShipping />
           </IconButton>
@@ -158,6 +166,13 @@ const ClientesPage = () => {
       return {
         ...campos,
         //usuario_id: usuario_id
+      };
+    }
+
+    const handleBeforeSubmitFleet = (campos) => {
+      return {
+        ...campos,
+        usuario_id: idClienteCarregarFrotas
       };
     }
 
@@ -182,7 +197,7 @@ const ClientesPage = () => {
           setDialogConfirmOpen(false);
         }}
       />
-    
+
       <DialogForm
         open={dialogFormOpen}
         setOpen={setDialogFormOpen}
@@ -194,6 +209,33 @@ const ClientesPage = () => {
         handleBeforeSubmit={handleBeforeSubmit}
       >
         <FormCadastro />
+      </DialogForm>
+
+      <DialogFrotas
+        open={dialogFrotasOpen}
+        setOpen={setDialogFrotasOpen}
+        idCliente={idClienteCarregarFrotas}
+        handleClickNew={()=>{
+          setDialogFleetFormOpen(true);
+        }}
+        setInitialValues={setInitialValuesFleet}
+      />
+
+      <DialogForm
+        open={dialogFleetFormOpen}
+        setOpen={setDialogFleetFormOpen}
+        title={"Nova Frota"}
+        initialValues={initialValuesFleet}
+        validationRules={validationRulesFleet}
+        reduxFunctionName={'SALVA_FROTA'}
+        callback={() => {
+          dispatch({type: 'BUSCA_CLIENTE_FROTAS', payload: {
+            client_id: idClienteCarregarFrotas
+          }});
+        }}
+        handleBeforeSubmit={handleBeforeSubmitFleet}
+      >
+        <FormFrota />
       </DialogForm>
     
       <Grid container spacing={2} style={{marginBottom: 15}}>
