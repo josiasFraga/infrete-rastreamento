@@ -5,7 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme, styled, createTheme } from '@mui/material/styles';
+import { useTheme, styled } from '@mui/material/styles';
 import { purple } from '@mui/material/colors';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
@@ -38,21 +38,12 @@ const CancelButton = styled(Button)(({ theme }) => ({
     padding: "15px 19px 15px 19px"
 }));
 
-const themeCreated = createTheme({
-  typography: {
-    fontFamily: [
-      'Lato',
-      'sans-serif'
-    ].join(','),
-  }
-});
-
 export default function DialogForm(props) {
 
   const theme = useTheme();
   const dispatch = useDispatch();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const [scroll, setScroll] = React.useState('paper');
+  const [scroll] = React.useState('paper');
 
   const open = props.open;
   const setOpen = props.setOpen;
@@ -69,7 +60,7 @@ export default function DialogForm(props) {
           let campos = Object.assign({}, values);
           var submitValues = campos;
           if ( typeof props.handleBeforeSubmit !== "undefined" ) {
-            var submitValues = props.handleBeforeSubmit(campos);
+            submitValues = props.handleBeforeSubmit(campos);
           }
 
           console.log(submitValues);
@@ -77,7 +68,7 @@ export default function DialogForm(props) {
           dispatch({
               type: reduxFunctionName,
               payload: {
-                  ...submitValues,
+                  submitValues: submitValues,
                   setSubmitting, 
                   resetForm,
                   callback: () => {

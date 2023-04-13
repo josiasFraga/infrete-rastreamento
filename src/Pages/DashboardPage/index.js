@@ -7,9 +7,11 @@ import ButtonFrotas from '../../components/ButtonFrotas';
 import Historico from './components/Historico';
 import RepresentacaoCaminhaoGrande from './components/RepresentacaoCaminhaoGrande';
 import RepresentacaoCaminhaoPequena from './components/RepresentacaoCaminhaoPequena';
+import Timer from './components/Timer';
 import { format, differenceInHours, differenceInMinutes } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import axios from "axios";
 
 const timeZone = 'America/Sao_Paulo';
 
@@ -30,13 +32,65 @@ const DashboardPage = () => {
   const minhas_frotas = useSelector(state => state.appReducer.minhas_frotas);
   const [itemActiveIndex, setItemActiveIndex] = React.useState(-1);
   const [open, setOpen] = React.useState(false);
+  const [cityName, setCityName] = React.useState('');
+  const refreshInterval = 10; // em segundos
   const car_length = 11;
 
-  useEffect(() => {
+  const buscaTracesFrota = () => {
     if ( Object.keys(frota_selecionada).length > 0 ) {
       dispatch({type: 'BUSCA_TRACES_FROTA', payload: {frota_id : frota_selecionada.id}});
       setItemActiveIndex(-1);
     }
+  }
+
+
+  const getCityName = (lat, long) => {
+
+    if ( lat == 0 || long == 0 || !lat || !long ) {
+      setCityName('Indeterminada');
+      return false;
+    }
+
+    const apiKey = process.env.REACT_APP_GOOGLE_MAPS_TOKEN;
+
+    console.log(process.env.REACT_APP_GOOGLE_MAPS_TOKEN);
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=${apiKey}`;
+
+    axios
+      .get(url)
+      .then((response) => {
+        const addressComponents = response.data.results[0].address_components;
+        let cityName = '';
+        let stateCode = '';
+        for (let i = 0; i < addressComponents.length; i++) {
+          const types = addressComponents[i].types;
+          if (types.includes('locality')) {
+            cityName = addressComponents[i].long_name;
+          }
+          if (types.includes('administrative_area_level_1')) {
+            stateCode = addressComponents[i].short_name;
+          }
+          if (cityName && stateCode) {
+            break;
+          }
+        }
+        if (!cityName) {
+          cityName = 'Cidade não encontrada';
+        }
+        if (!stateCode) {
+          stateCode = 'Estado não encontrado';
+        }
+        setCityName(`${cityName}, ${stateCode}`);
+      })
+      .catch((error) => {
+        setCityName('Sistema indisponível');
+        console.log(error);
+      });
+
+  }
+
+  useEffect(() => {
+      buscaTracesFrota();
 	}, [frota_selecionada]);
 
   useEffect(() => {
@@ -48,6 +102,7 @@ const DashboardPage = () => {
       
     }
 	}, [minhas_frotas]);
+
 
   let last_response = {};
   let last_row = {};
@@ -112,6 +167,11 @@ const DashboardPage = () => {
     }
   }
 
+  useEffect(() => {
+    getCityName(last_response.lat, last_response.lon)
+  }, [last_response.lat, last_response.lon]);
+
+
   return (
     <Grid container component="main" sx={{ minHeight: '100vh', backgroundColor: '#184a61' }}>
       <Historico open={open} setOpen={setOpen} />
@@ -149,7 +209,7 @@ const DashboardPage = () => {
                       />
                     </Grid>
                     <Grid item sx={{flexGrow: 1, textAlign: `center`, mt: 0, pt: 0, color: '#184a61'}}>
-                      <h4 style={{marginBottom: 0, paddingBottom: 0}}>Lat: {last_response.lat} Long: {last_response.lon}</h4>
+                      <h4 style={{marginBottom: 0, paddingBottom: 0}}>{cityName}</h4>
                       <h5 style={{marginTop: 0, paddingTop: 3, color: '#999', fontSize: 15}}>{formatarDataISO8601(last_row.created)}</h5>
                     </Grid>
                     <Grid 
@@ -264,7 +324,24 @@ const DashboardPage = () => {
               <div style={{borderRadius: 15}}>
                 
                 <Grid container spacing={0}>
-                  <Grid item xs={4}>                    
+                  <Grid item xs={4}style={{
+                    color: '#fff', 
+                    textAlign: 'center',
+                    paddingRight: 10,
+                    cursor: 'pointer'
+                  }}
+                  onClick={()=>{
+                    buscaTracesFrota();
+                  }}>
+                    <div style={{
+                      backgroundColor: '#95cacf',
+                      borderRadius: 15,
+                      paddingTop: 23,
+                      paddingBottom: 23
+                    }}>
+                      Atualizar<br/>
+                      Atualizando automaticamente em <Timer refreshInterval={refreshInterval} buscaTracesFrota={buscaTracesFrota} /> segundos
+                    </div>                                      
                   </Grid>
                   <Grid item xs={4} style={{
                     color: '#fff', 

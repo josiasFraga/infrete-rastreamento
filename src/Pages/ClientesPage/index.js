@@ -11,7 +11,7 @@ import { format } from 'date-fns';
 import { DataGrid } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import { DeleteForever, Edit } from '@mui/icons-material';
+import { DeleteForever, Edit, LocalShipping } from '@mui/icons-material';
 import * as yup from "yup";
 
 
@@ -25,10 +25,6 @@ function formatarDataISO8601(dataISO8601) {
 const initialState = {
   nome: "",
   cnpj: "",
-  frotas: [{
-    serial: "",
-    placa: "",
-  }],
   email: "",
   senha: "",
   repeatSenha: "",
@@ -41,28 +37,45 @@ const ClientesPage = () => {
     const [idClienteExcluir, setIdClienteExcluir] = React.useState(null);
     const [dialogConfirmOpen, setDialogConfirmOpen] = React.useState(false);
     const [dialogFormOpen, setDialogFormOpen] = React.useState(false);
+    const [idClienteCarregarFrotas, setIdClienteCarregarFrotas] = React.useState(null);
+    
     const [initialValues, setInitialValues] = React.useState(initialState);
+    
 
-    const fleetValidationSchema = yup.object().shape({
+    const frotaValidationRules = yup.object().shape({
       serial: yup.string().required("Número serial é obrigatório"),
       placa: yup.string().matches(/^[a-zA-Z]{3}[0-9][A-Za-z0-9][0-9]{2}$/, 'Formato antigo da placa inválido.')
       .required('Placa é obrigatório'),
     });
   
     const validationRules = {
+      id: yup.string(),
       nome: yup.string().required("Nome é obrigatório"),
       cnpj: yup.string().required("CNPJ é obrigatório"),
-      frotas: yup.array()
-      .of(fleetValidationSchema),
       email: yup.string().email('Endereço de e-mail inválido').required('E-mail é obrigatório'),
-      senha: yup.string().required("Senha é obrigatória"),
+      senha: yup.string().when('id', {
+        is: (val) => !val || val.trim() === '',
+        then: yup.string().required('Senha é obrigatória'),
+        otherwise: yup.string()
+      }),
       repeatSenha: yup
         .string()
-        .oneOf([yup.ref("senha"), null], "As senhas não coincidem")
-        .required("Confirmação de senha é obrigatória"),
+        .oneOf([yup.ref("senha"), null], "As senhas não coincidem"),
+        //.required("Confirmação de senha é obrigatória"),
     };
-    
-    const handleEdit = () => {};
+
+    const handleClickEdit = (usuario) => {
+      setInitialValues(
+      {
+        id: usuario.id, 
+        nome: usuario.nome,
+        cnpj: usuario.cnpj,
+        email: usuario.email,
+        senha: "",
+        repeatSenha: "",
+      });
+      setDialogFormOpen(true);
+    }
   
     const handleDelete = (cliente_id) => {
 		  dispatch({type: 'DELETE_USUARIO', payload: {id: cliente_id}});
@@ -94,7 +107,7 @@ const ClientesPage = () => {
         width: 100,
         sortable: false,
         renderCell: (params) => (
-          <IconButton color="primary" aria-label="edit" onClick={() => handleEdit(params.row)}>
+          <IconButton color="primary" aria-label="edit" onClick={() => handleClickEdit(params.row)}>
             <Edit />
           </IconButton>
         ),
@@ -111,6 +124,22 @@ const ClientesPage = () => {
             setDialogConfirmOpen(true);
           }}>
             <DeleteForever />
+          </IconButton>
+          )
+        },
+      },
+      {
+        field: 'frotas',
+        headerName: 'Frotas',
+        width: 100,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+          <IconButton color="secondary" aria-label="delete" onClick={() => {
+            setIdClienteCarregarFrotas(params.row.id);
+            //setDialogConfirmOpen(true);
+          }}>
+            <LocalShipping />
           </IconButton>
           )
         },
@@ -196,8 +225,6 @@ const ClientesPage = () => {
             </Box>
         </Grid>
       </Grid>
-
-      
 
       <Grid container spacing={0} style={{marginBottom: 15}}>
         <Grid item xs={12} style={{textAlign: 'center'}}>

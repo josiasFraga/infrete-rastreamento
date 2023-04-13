@@ -2,23 +2,6 @@ import React from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 
-const maskPlaca = (text) => {
-  let retorno = '';
-  let x =  text.match(/([A-Z]{0,3})([0-9]{0,1})([0-9A-Z]{0,1})([0-9]{0,2})/);
-
-  if ( x[1].length < 3 ) {
-    return x[1];
-  } else if ( x[2] === '' ) {
-    return x[1]+x[2];
-  } else if ( x[3] === '' ) {
-    return x[1]+x[2]+x[3];
-  }
-
-  retorno = x[1]+x[2]+x[3]+x[4];
-  return retorno;
-
-}
-
 function maskCnpj(value) {
     const cnpjRegex = /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/;
     const match = value.replace(/\D/g, '').match(cnpjRegex);
@@ -65,38 +48,6 @@ const FormCadastro = (props) => {
           placeholder="__.___.___/____-__"
           helperText={
             formik.errors.cnpj && formik.touched.cnpj ? formik.errors.cnpj : ""
-          }
-          fullWidth
-        />
-      </Box>
-      <Box component="div" sx={{ mt: 2, width: '100%' }}>
-        <TextField
-          label="Número serial"
-          name={`frotas[0]serial`}
-          value={formik.values.frotas[0].serial}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          error={formik.errors.frotas && formik.errors.frotas[0].serial && formik.touched.frotas && formik.touched.frotas[0].serial}
-          helperText={
-            formik.errors.frotas && formik.errors.frotas[0].serial && formik.touched.frotas && formik.touched.frotas[0].serial
-              ? formik.errors.frotas[0].serial
-              : ""
-          }
-          fullWidth
-        />
-      </Box>
-      <Box component="div" sx={{ mt: 2, width: '100%' }}>
-        <TextField
-          label="Placa"
-          name={`frotas[0]placa`}
-          value={formik.values.frotas[0].placa}
-          onChange={(event) => {
-            formik.setFieldValue(`frotas[0]placa`, maskPlaca(event.target.value.toUpperCase()));
-          }}
-          onBlur={formik.handleBlur}
-          error={formik.errors.frotas && formik.errors.frotas[0].placa && formik.touched.frotas && formik.touched.frotas[0].placa}
-          helperText={
-            formik.errors.frotas && formik.errors.frotas[0].placa && formik.touched.frotas && formik.touched.frotas[0].placa ? formik.errors.frotas[0].placa : ""
           }
           fullWidth
         />

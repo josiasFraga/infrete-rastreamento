@@ -7,21 +7,29 @@ function* cadastro({payload}) {
     var data = new FormData();
     var dados = payload.submitValues;
 
+    console.log(JSON.stringify(dados));
+
     data.append("dados", JSON.stringify(dados));
+
+    let endpoint = process.env.REACT_APP_API_URL + '/usuarios/add.json';
+
+    if ( dados.id && dados.id !== null && dados.id !== '' ) {
+        endpoint = process.env.REACT_APP_API_URL + '/usuarios/edit/' + dados.id + '.json';
+    }
 
     try {
         const response = yield call(callApi, {
-            endpoint: process.env.REACT_APP_API_URL + '/usuarios/add.json',
+            endpoint: endpoint,
             method: 'POST',
             data: data,
         });
 
         payload.setSubmitting(false);
 
-        if ( response.status !== 'ok' ) {
+        if ( response.data.status !== 'ok' ) {
             toast.error("Ocorreu um erro ao realizar o cadastro, tente novamente." );
         } else {
-            toast.success("Seu cadastro foi realizado com sucesso!");
+            toast.success("O cadastro foi realizado com sucesso!");
             if ( payload.callback ) {
                 payload.callback();
             }
