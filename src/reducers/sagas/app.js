@@ -320,6 +320,79 @@ function* dFrota({payload}) {
 
 }
 
+function* sConfigs({payload}) {
+
+    var data = new FormData();
+    var dados = payload.submitValues;
+
+    console.log(JSON.stringify(dados));
+
+    data.append("dados", JSON.stringify(dados));
+
+    const endpoint = process.env.REACT_APP_API_URL + '/configs/edit/' + dados.key + '.json';
+
+    try {
+        const response = yield call(callApi, {
+            endpoint: endpoint,
+            method: 'POST',
+            data: data,
+        });
+
+        payload.setSubmitting(false);
+
+        if ( response.data.status !== 'ok' ) {
+            toast.error("Ocorreu um erro ao salvar as configurações, tente novamente." );
+        } else {
+            toast.success("As configurações foram atualizadas com sucesso!");
+            if ( payload.callback ) {
+                payload.callback();
+            }
+        }
+
+
+    } catch ({message, response}) {
+        toast.error("Ocorreu um erro ao atualizar as configurações, tente novamente. " + message );
+        console.warn('[ERROR : SAVE CONFIGS]', {message, response});
+        payload.setSubmitting(false);
+    }
+
+}
+
+function* bConfigs({payload}) {
+
+    try {
+        const response = yield call(callApi, {
+            endpoint: process.env.REACT_APP_API_URL + '/configs/view.json',
+            method: 'GET',
+            params: {
+                key: payload.key
+            },
+        });
+
+        if (response.data.status === 'ok') {
+            if ( payload.key == 'support_phone' ) {
+                yield put({
+                    type: 'SET_SUPPORT_PHONE',
+                    payload: response.data.data
+                });
+
+            }
+        } else {
+            toast.error("Ocorreu um erro ao buscar as configurações");
+            yield put({
+				type: 'BUSCA_CONFIGS_FAILED'
+			});
+        }
+
+    } catch ({message, response}) {
+        toast.error("Ocorreu um erro ao buscar as configurações");
+        yield put({
+            type: 'BUSCA_CONFIGS_FAILED',
+        });
+    }
+
+}
+
 export default function* () {
 	yield takeLatest('LOGIN_TRIGGER', login);
 	yield takeLatest('CADASTRO_TRIGGER', cadastro);
@@ -331,5 +404,8 @@ export default function* () {
 	yield takeLatest('BUSCA_CLIENTE_FROTAS', bClienteFrotas);
 	yield takeLatest('SALVA_FROTA', sFrota);
 	yield takeLatest('DELETE_FROTA', dFrota);
+	yield takeLatest('SAVE_CONFIGS', sConfigs);
+	yield takeLatest('BUSCA_CONFIGS', bConfigs);
+    
     
 }

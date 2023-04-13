@@ -9,6 +9,8 @@ const INITIAL_STATE = {
     clientes: [],
     clientes_loading: false,
     usuario_excluindo: false,
+    configs_loading: false,
+    support_phone: '',
 };
   
 export const appReducer = (state = INITIAL_STATE, action) => {
@@ -51,6 +53,13 @@ export const appReducer = (state = INITIAL_STATE, action) => {
   
       case 'SET_FROTA_SELECIONADA':
       return {...state, frota_selecionada: action.payload};
+  
+      case 'BUSCA_CONFIGS':
+      return {...state, configs_loading: true};
+      case 'SET_SUPPORT_PHONE':
+      return {...state, configs_loading: false, support_phone: action.payload};
+      case 'BUSCA_CONFIGS_FAILED':
+      return {...state, configs_loading: false};
   
       case 'RESET_STATE':
       return INITIAL_STATE;

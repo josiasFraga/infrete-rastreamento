@@ -11,7 +11,7 @@ import Timer from './components/Timer';
 import { format, differenceInHours, differenceInMinutes } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import axios from "axios";
+import BotaoSuporte from './components/BotaoSuporte';
 
 const timeZone = 'America/Sao_Paulo';
 
@@ -309,19 +309,7 @@ const DashboardPage = () => {
                       Histórico
                     </div>
                   </Grid>
-                  <Grid item xs={4} style={{
-                    color: '#fff',
-                    textAlign: 'center',
-                  }}>
-                    <div style={{
-                      backgroundColor: '#95cacf',
-                      borderRadius: 15,
-                      paddingTop: 35,
-                      paddingBottom: 35
-                    }}>
-                      Suporte
-                    </div>
-                  </Grid>
+                  <BotaoSuporte />
                 </Grid>
     
               </div>

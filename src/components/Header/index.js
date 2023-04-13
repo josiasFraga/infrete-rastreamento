@@ -1,27 +1,40 @@
 import * as React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import Avatar from '@mui/material/Avatar';
+//import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import Divider from '@mui/material/Divider';
+//import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import PersonAdd from '@mui/icons-material/PersonAdd';
+//import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Person from '@mui/icons-material/Person';
 import Dashboard from '@mui/icons-material/Dashboard';
+import DialogForm from '../../components/Dialogs/DialogForm';
+import FormWhatsapp from '../../components/Forms/FormWhatsapp';
+import * as yup from "yup";
 
-import { useNavigate, Link, json } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+const initialState = {
+  key: 'support_phone',
+  whatsapp: "",
+}
 
 export default function AccountMenu() {
   const navigate = useNavigate();
+	const dispatch = useDispatch();
+  const support_phone = useSelector(state => state.appReducer.support_phone);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorMenuEl, setAnchorMenuEl] = React.useState(null);
+  const [dialogFormOpen, setDialogFormOpen] = React.useState(false);
+  const [initialValues, setInitialValues] = React.useState(initialState);
   const open = Boolean(anchorEl);
   const openMenu = Boolean(anchorMenuEl);
 
@@ -58,9 +71,47 @@ export default function AccountMenu() {
   const dashboard = () => {
     navigate("/dashboard");
   }
+  
+  const validationRules = {
+    whatsapp: yup.string().required("WhatsApp é obrigatório"),
+  };
+
+  const loadWhatasappSuport = () => {
+    dispatch({type: 'BUSCA_CONFIGS', payload: {key : 'support_phone'}});
+  }
+
+  const handleBeforeSubmit = (campos) => {
+    return {
+      ...campos,
+      //usuario_id: usuario_id
+    };
+  }
+
+  React.useEffect(() => {
+    setInitialValues({
+      key: 'support_phone',
+      whatsapp: support_phone,
+    });
+	}, [support_phone]);
+  
+  React.useEffect(() => {
+    loadWhatasappSuport();
+	}, [support_phone]);
 
   return (
     <React.Fragment>
+    <DialogForm
+      open={dialogFormOpen}
+      setOpen={setDialogFormOpen}
+      title={"Configurações"}
+      initialValues={initialValues}
+      validationRules={validationRules}
+      reduxFunctionName={'SAVE_CONFIGS'}
+      callback={loadWhatasappSuport}
+      handleBeforeSubmit={handleBeforeSubmit}
+    >
+      <FormWhatsapp />
+    </DialogForm>
     <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'unset' }}>
       <Toolbar>
           <IconButton
@@ -127,7 +178,10 @@ export default function AccountMenu() {
               </ListItemIcon>
               Clientes
             </MenuItem>
-            <MenuItem onClick={handleCloseMenu}>
+            <MenuItem onClick={()=> {
+              setDialogFormOpen(true);
+              handleCloseMenu();
+            }}>
               <ListItemIcon>
                 <Settings fontSize="small" />
               </ListItemIcon>
