@@ -16,7 +16,6 @@ import IconButton from '@mui/material/IconButton';
 import { DeleteForever, Edit, LocalShipping } from '@mui/icons-material';
 import * as yup from "yup";
 
-
 function formatarDataISO8601(dataISO8601) {
   const data = new Date(dataISO8601.split('+')[0]);
   const dataFormatada = format(data, 'dd/MM/yyyy');
@@ -49,7 +48,7 @@ const ClientesPage = () => {
     
     const [initialValues, setInitialValues] = React.useState(initialState);
     const [initialValuesFleet, setInitialValuesFleet] = React.useState(initialStateFleet);
-  
+
     const validationRules = {
       id: yup.string(),
       nome: yup.string().required("Nome é obrigatório"),

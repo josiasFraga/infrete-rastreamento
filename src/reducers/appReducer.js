@@ -11,6 +11,7 @@ const INITIAL_STATE = {
     usuario_excluindo: false,
     configs_loading: false,
     support_phone: '',
+    date_and_time_to_filter_traces: '',
 };
   
 export const appReducer = (state = INITIAL_STATE, action) => {
@@ -60,6 +61,9 @@ export const appReducer = (state = INITIAL_STATE, action) => {
       return {...state, configs_loading: false, support_phone: action.payload};
       case 'BUSCA_CONFIGS_FAILED':
       return {...state, configs_loading: false};
+    
+      case 'SET_DATE_TIME_TO_FILTER_TRACES':
+      return {...state, date_and_time_to_filter_traces: action.payload};
   
       case 'RESET_STATE':
       return INITIAL_STATE;

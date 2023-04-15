@@ -393,6 +393,23 @@ function* bConfigs({payload}) {
 
 }
 
+function* filterTracesDateAndTime({payload}) {
+
+    try {
+        yield put({
+            type: 'SET_DATE_TIME_TO_FILTER_TRACES',
+            payload: payload.submitValues.date
+        });
+        if ( payload.callback ) {
+            payload.callback();
+        }
+    
+    } catch (e) {
+        console.log(e)
+    }
+
+}
+
 export default function* () {
 	yield takeLatest('LOGIN_TRIGGER', login);
 	yield takeLatest('CADASTRO_TRIGGER', cadastro);
@@ -406,6 +423,7 @@ export default function* () {
 	yield takeLatest('DELETE_FROTA', dFrota);
 	yield takeLatest('SAVE_CONFIGS', sConfigs);
 	yield takeLatest('BUSCA_CONFIGS', bConfigs);
+    yield takeLatest('FILTER_TRACES_DATE_AND_TIME', filterTracesDateAndTime);
     
     
 }

@@ -2,9 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import Grid from '@mui/material/Grid';
 
-
-
-
 const BotaoSuporte = () => {
 
   const support_phone = useSelector(state => state.appReducer.support_phone);

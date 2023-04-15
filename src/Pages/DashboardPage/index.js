@@ -8,10 +8,14 @@ import Historico from './components/Historico';
 import RepresentacaoCaminhaoGrande from './components/RepresentacaoCaminhaoGrande';
 import RepresentacaoCaminhaoPequena from './components/RepresentacaoCaminhaoPequena';
 import Timer from './components/Timer';
+import BotaoSuporte from './components/BotaoSuporte';
+import DialogForm from '../../components/Dialogs/DialogForm';
+import FormFiltroDataHora from '../../components/Forms/FormFiltroDataHora';
+import * as yup from "yup";
+
 import { format, differenceInHours, differenceInMinutes } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import BotaoSuporte from './components/BotaoSuporte';
 
 const timeZone = 'America/Sao_Paulo';
 
@@ -22,6 +26,9 @@ function formatarDataISO8601(dataISO8601) {
   return dataFormatada + ' às ' + hora;
 }
 
+const initialStateFiltroDataHora = {
+  date: ''
+}
 
 const DashboardPage = () => {
 
@@ -30,9 +37,12 @@ const DashboardPage = () => {
   const frota_selecionada = useSelector(state => state.appReducer.frota_selecionada);
   const traces_frota = useSelector(state => state.appReducer.traces_frota);
   const minhas_frotas = useSelector(state => state.appReducer.minhas_frotas);
+  const date_and_time_to_filter_traces = useSelector(state => state.appReducer.date_and_time_to_filter_traces);
+  const [dialogFormFiltroDataHoraOpen, setDialogFormFiltroDataHoraOpen] = React.useState(false);
   const [itemActiveIndex, setItemActiveIndex] = React.useState(-1);
   const [open, setOpen] = React.useState(false);
-  const refreshInterval = 10; // em segundos
+  const [initialValuesFiltroDataHora, setInitialValuesFiltroDataHora] = React.useState(initialStateFiltroDataHora);
+  const refreshInterval = 60; // em segundos
   const car_length = 11;
 
   const buscaTracesFrota = () => {
@@ -119,9 +129,51 @@ const DashboardPage = () => {
     }
   }
 
+  const handleBeforeSubmit = (campos) => {
+    return {
+      ...campos,
+      //usuario_id: usuario_id
+    };
+  }
+  const validationRules = {
+    //data: yup.string().required("Data é obrigatório"),
+  };
+
+  useEffect(() => {
+    if ( date_and_time_to_filter_traces != '' && date_and_time_to_filter_traces != null) {
+      const selectedDate = new Date(date_and_time_to_filter_traces);
+     
+      const closestIndex = traces_frota.findIndex((trace) => {
+
+        const traceDate = new Date(trace.created.slice(0, -6));
+        const diff = Math.abs(traceDate - selectedDate);
+        return diff === Math.min(...traces_frota.map((trace) => Math.abs(new Date(trace.created.slice(0, -6)) - selectedDate)));
+      });
+      const closestTrace = traces_frota[closestIndex];
+      //const closestTraceId = closestTrace.id;
+      setItemActiveIndex(closestIndex);
+      console.log(closestTrace);
+
+    }
+	}, [date_and_time_to_filter_traces]);
+
   return (
     <Grid container component="main" sx={{ minHeight: '100vh', backgroundColor: '#184a61' }}>
+      
       <Historico open={open} setOpen={setOpen} />
+    
+      <DialogForm
+        open={dialogFormFiltroDataHoraOpen}
+        setOpen={setDialogFormFiltroDataHoraOpen}
+        title={"Filtrar por data/hora"}
+        initialValues={initialValuesFiltroDataHora}
+        validationRules={validationRules}
+        reduxFunctionName={'FILTER_TRACES_DATE_AND_TIME'}
+        handleBeforeSubmit={handleBeforeSubmit}
+      >
+        <FormFiltroDataHora />
+      </DialogForm>
+    
       <CssBaseline />
       <Header />
       <Grid container spacing={2} style={{marginBottom: 15}}>
@@ -138,7 +190,7 @@ const DashboardPage = () => {
           <Grid container spacing={2} style={{marginBottom: 15}}>
             <Grid item xs={12} style={{textAlign: 'center'}}>
               <div style={{paddingLeft: 35, paddingRight: 35}}>
-                <div className='bg-white' style={{borderRadius: 15}}>
+                <div className='bg-white' style={{borderRadius: 15}} >
                   <Grid container spacing={0}>
                     <Grid 
                       item 
@@ -155,7 +207,7 @@ const DashboardPage = () => {
                         size={26} 
                       />
                     </Grid>
-                    <Grid item sx={{flexGrow: 1, textAlign: `center`, mt: 0, pt: 0, color: '#184a61'}}>
+                    <Grid item sx={{flexGrow: 1, textAlign: `center`, mt: 0, pt: 0, color: '#184a61', cursor: 'pointer'}} onClick={()=>{setDialogFormFiltroDataHoraOpen(true)}}>
                       <h4 style={{marginBottom: 0, paddingBottom: 0}}>{last_row.localidade}</h4>
                       <h5 style={{marginTop: 0, paddingTop: 3, color: '#999', fontSize: 15}}>{formatarDataISO8601(last_row.created)}</h5>
                     </Grid>
