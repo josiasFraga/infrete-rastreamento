@@ -80,7 +80,7 @@ const DashboardPage = () => {
     sensores_splitted = sensores.split('');
   
     sensores_ativos = sensores_splitted.filter((_sensor) => {
-      return _sensor === "0";
+      return _sensor !== "F";
     });
   
     const item_created = last_row.created.split('+')[0];//isso é para n bugar o timezone
@@ -178,7 +178,7 @@ const DashboardPage = () => {
       <Header />
       <Grid container spacing={2} style={{marginBottom: 15}}>
           <Grid item xs={7}>
-              <h3 style={{color: 'white', textAlign: 'center'}}>Infrete Trackload</h3>
+              <h3 style={{color: 'white', textAlign: 'center'}}>Infrete Inload</h3>
           </Grid>
           <Grid item xs={5}>
               <ButtonFrotas />
