@@ -30,6 +30,11 @@ const initialStateFiltroDataHora = {
   date: ''
 }
 
+function convertStringToFormattedDate(dateString) {
+  const date = format(new Date(dateString), 'dd/MM/yyyy \'às\' HH:mm');
+  return date;
+}
+
 const DashboardPage = () => {
 
 	const dispatch = useDispatch();
@@ -71,12 +76,14 @@ const DashboardPage = () => {
   let last_update_time = "";
   let sensores_ativos = [];
   let sensores_splitted = [];
+  let last_seen = "Não visto";
 
   if ( traces_frota.length > 0 ) {
   
     last_row = traces_frota.at(itemActiveIndex);
     last_response = JSON.parse(last_row.response);
     const sensores = last_response.sen;
+    const frota = last_row.frota;
     sensores_splitted = sensores.split('');
   
     sensores_ativos = sensores_splitted.filter((_sensor) => {
@@ -86,6 +93,11 @@ const DashboardPage = () => {
     const item_created = last_row.created.split('+')[0];//isso é para n bugar o timezone
     const now = utcToZonedTime(new Date(), timeZone);
     let created = new Date(item_created);
+  
+    if ( frota.ultimo_recebimento != null ) {
+      const frota_last_seen = frota.ultimo_recebimento.split('+')[0];//isso é para n bugar o timezone
+      last_seen = convertStringToFormattedDate(frota_last_seen);
+    }
   
     const difference_in_hours = Math.abs(differenceInHours(created, now ));
     const difference_in_minutes = Math.abs(differenceInMinutes(created, now ));
@@ -298,8 +310,8 @@ const DashboardPage = () => {
                     paddingLeft: 10,
                     paddingBottom: 10
                   }}>
-                    Quantidade:
-                    <h4 style={{fontSize: 18, fontWeight: 'normal', margin: 0, padding: 0}}>{sensores_ativos.length}</h4>
+                    Visto em:
+                    <h4 style={{fontSize: 18, fontWeight: 'normal', margin: 0, padding: 0}}>{last_seen}</h4>
                   </Grid>
                   <Grid item xs={6} style={{
                     color: '#989ca7', 
@@ -339,7 +351,7 @@ const DashboardPage = () => {
                       paddingBottom: 23
                     }}>
                       Atualizar<br/>
-                      Atualizando automaticamente em <Timer refreshInterval={refreshInterval} buscaTracesFrota={buscaTracesFrota} /> segundos
+                      Atualiza em <Timer refreshInterval={refreshInterval} buscaTracesFrota={buscaTracesFrota} />s
                     </div>                                      
                   </Grid>
                   <Grid item xs={4} style={{
