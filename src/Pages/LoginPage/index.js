@@ -51,9 +51,7 @@ const LoginPage = () => {
               alignItems: 'center',
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-              <LockOutlinedIcon />
-            </Avatar>
+            <img src='/logo_azul.png' width={120}  style={{marginBottom: 5}} />
             <Typography component="h1" variant="h5">
               Entrar
             </Typography>
